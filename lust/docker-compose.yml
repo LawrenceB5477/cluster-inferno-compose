@@ -1,0 +1,39 @@
+services:
+  redis_service:
+    image: bitnami/redis:latest
+    environment:
+      REDIS_PASSWORD: redispassword
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data_volume:/bitnami/redis/data
+    restart: always
+    networks:
+      - redis_network
+  redis_commander_service:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    depends_on:
+      - redis_service
+    networks:
+      - redis_network
+    environment:
+      REDIS_HOST: redis_service
+      REDIS_PASSWORD: redispassword
+    ports:
+      - 8081:8081
+  postgres_service:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_volume:/var/lib/postgresql/data
+
+volumes:
+  redis_data_volume:
+  postgres_data_volume:
+
+networks:
+  redis_network:
