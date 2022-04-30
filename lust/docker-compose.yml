@@ -1,17 +1,16 @@
 services:
   redis_service:
-    image: bitnami/redis:latest
-    environment:
-      REDIS_PASSWORD: redispassword
+    image: arm64v8/redis
+    command: redis-server --requirepass redispassword
     ports:
       - 6379:6379
     volumes:
-      - redis_data_volume:/bitnami/redis/data
+      - redis_data_volume:/data
     restart: always
     networks:
       - redis_network
   redis_commander_service:
-    image: rediscommander/redis-commander:latest
+    image: ghcr.io/joeferner/redis-commander:latest
     restart: always
     depends_on:
       - redis_service
@@ -24,6 +23,7 @@ services:
       - 8081:8081
   postgres_service:
     image: postgres
+    restart: always
     environment:
       POSTGRES_PASSWORD: postgrespassword
     ports:
